@@ -37,17 +37,24 @@ window.onload = function () {
     var selfDiv = document.querySelector('#selectDiv')
     var topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
     var leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
+    addRightMenu()
     if (selfDiv.parentNode) {
         selfDiv.parentNode.addEventListener('scroll', function () {
+            document.querySelector('.menuUl').style.display = 'none'
             topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
             leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
         })
     }
     document.addEventListener('scroll', function () {
+        document.querySelector('.menuUl').style.display = 'none'
         topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
         leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
     })
     selfDiv.onmousedown = function (e) {
+        if (document.querySelector('.menuUl').style.display == 'block') {
+            document.querySelector('.menuUl').style.display = 'none'
+            return
+        }
         var posx = e.offsetX;
         var posy = e.offsetY;
         var div = document.createElement("div");
@@ -56,6 +63,7 @@ window.onload = function () {
         var textnode = document.createTextNode(count + '');
         node.onmouseover = function (eno) {
             eno.stopPropagation()
+            document.querySelector('.menuUl').style.display = 'none'
             delCount = parseInt(eno.target.innerHTML)
             eno.target.innerHTML = 'X'
             eno.target.classList.add('rotate')
@@ -83,6 +91,51 @@ window.onload = function () {
         div.className = "selectDiv";
         div.onmousedown = function (ed) {
             ed.stopPropagation()
+            document.querySelector('.menuUl').style.display = 'none'
+        }
+        div.oncontextmenu = function (edt) {
+            edt.preventDefault()
+            edt.stopPropagation()
+            return
+
+            // document.querySelector('.menuUl').style.display = 'none'
+            // var xx = edt.x || edt.layerX || 0
+            // var yy = edt.y || edt.layerY || 0
+            // document.querySelector('.menuUl').style.left = xx + 'px'
+            // document.querySelector('.menuUl').style.top = yy + 'px'
+            // document.querySelector('.menuUl').style.display = 'block'
+            // document.querySelector('.menuLi1').onmousedown = function (e1) {
+            //     e1.stopPropagation()
+            //     document.querySelector('.menuUl').style.display = 'none'
+            //     domtoimage.toBlob(edt.target)
+            //     .then(function (blob) {
+            //         window.saveAs(blob, 'my-node.png');
+            //     });
+            // }
+            // document.querySelector('.menuLi2').onmousedown = function (e2) {
+            //     e2.stopPropagation()
+            //     document.querySelector('.menuUl').style.display = 'none'
+            //     domtoimage.toJpeg(edt.target, { quality: 0.95 })
+            //     .then(function (dataUrl) {
+            //         var link = document.createElement('a');
+            //         link.download = 'my-image-name.jpeg';
+            //         link.href = dataUrl;
+            //         link.click();
+            //     })
+            // }
+            // document.querySelector('.menuLi3').onmousedown = function (e3) {
+            //     e3.stopPropagation()
+            //     document.querySelector('.menuUl').style.display = 'none'
+            //     domtoimage.toPng(edt.target)
+            //         .then(function (dataUrl) {
+            //             var img = new Image()
+            //             img.src = dataUrl
+            //             document.body.appendChild(img)
+            //         })
+            //         .catch(function (error) {
+            //             console.error('oops, something went wrong!', error)
+            //         })
+            // }
         }
         div.style.left = e.offsetX + "px";
         div.style.top = e.offsetY + "px";
@@ -114,4 +167,22 @@ window.onload = function () {
         }
     }
 
+    // 创建右键内容
+    function addRightMenu() {
+        var menuUl = document.createElement('ul')
+        var menuLi1 = document.createElement('li')
+        var menuLi2 = document.createElement('li')
+        var menuLi3 = document.createElement('li')
+        menuLi1.innerHTML = '保存png格式图片'
+        menuLi2.innerHTML = '保存jpeg格式图片'
+        menuLi3.innerHTML = '添加到页面'
+        menuLi1.className = 'menuLi1'
+        menuLi2.className = 'menuLi2'
+        menuLi3.className = 'menuLi3'
+        menuUl.appendChild(menuLi1)
+        menuUl.appendChild(menuLi2)
+        menuUl.appendChild(menuLi3)
+        menuUl.className = 'menuUl'
+        document.body.appendChild(menuUl)
+    }
 }
