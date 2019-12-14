@@ -16,7 +16,7 @@ function createSelectBox(index) {
 var count = 1
 var delCount = null
 // 供外部调用主动删除接口，传下标
-function deleteSelectDivByOtherBtn(count) {
+function deleteSelectDivByOtherBtn(boxIndex) {
     var doms = document.querySelectorAll('.tagDiv')
     for (var i = 0; i < doms.length; i++) {
         var dom = doms[i]
@@ -26,11 +26,11 @@ function deleteSelectDivByOtherBtn(count) {
     }
     for (var j = 0; j < doms.length; j++) {
         var element = doms[j];
-        if (parseInt(element.innerHTML) > parseInt(count)) {
+        if (parseInt(element.innerHTML) > parseInt(boxIndex)) {
             element.innerHTML = parseInt(element.innerHTML) - 1
         }
     }
-    selectDivDeleteHandle(count)
+    selectDivDeleteHandle(boxIndex)
     count--
 }
 window.onload = function () {
