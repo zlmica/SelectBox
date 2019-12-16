@@ -37,7 +37,7 @@ window.onload = function () {
     var selfDiv = document.querySelector('#selectDiv')
     var topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
     var leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
-    if (selfDiv.parentNode) {
+    if (selfDiv.parentNode != null) {
         selfDiv.parentNode.addEventListener('scroll', function () {
             topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
             leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
@@ -55,7 +55,7 @@ window.onload = function () {
     selfDiv.onmousedown = function (e) {
         topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
         leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
-        if (selfDiv.parentNode) {
+        if (selfDiv.parentNode != null) {
             topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
             leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
         }
@@ -100,21 +100,43 @@ window.onload = function () {
         selfDiv.appendChild(div);
         selfDiv.onmousemove = function (ev) {
             if (ev.clientX > (posx + selfDiv.offsetLeft - leftScrollDistance)) {
-                div.style.left = posx + "px";
-                div.style.top = posy + "px";
-                // 坐标
-                topLeftPointX = posx
-                topLeftPointY = posy
-                bottomRightPointX = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + posx
-                bottomRightPointY = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + posy
+                if (ev.clientY > (posy + selfDiv.offsetTop - topScrollDistance)) {
+                    div.removeAttribute("style")
+                    div.style.left = posx + "px";
+                    div.style.top = posy + "px";
+                    // 坐标
+                    topLeftPointX = posx
+                    topLeftPointY = posy
+                    bottomRightPointX = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + posx
+                    bottomRightPointY = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + posy
+                } else {
+                    div.removeAttribute("style")
+                    div.style.left = posx + "px";
+                    div.style.bottom = (parseInt(selfDiv.style.height) - posy) + "px";
+                    // 坐标
+                    topLeftPointX = posx
+                    topLeftPointY = posy - Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy))
+                    bottomRightPointX = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + posx
+                    bottomRightPointY = posy
+                }
             } else {
-                div.removeAttribute("style")
-                div.style.right = (parseInt(selfDiv.style.width) - posx) + "px";
-                div.style.bottom = (parseInt(selfDiv.style.height) - posy) + "px";
-                topLeftPointX = posx - Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance))
-                topLeftPointY = posy - Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy))
-                bottomRightPointX = posx
-                bottomRightPointY = posy
+                if (ev.clientY > (posy + selfDiv.offsetTop - topScrollDistance)) {
+                    div.removeAttribute("style")
+                    div.style.right = (parseInt(selfDiv.style.width) - posx) + "px";
+                    div.style.top = posy + "px";
+                    topLeftPointX = posx - Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance))
+                    topLeftPointY = posy
+                    bottomRightPointX = posx
+                    bottomRightPointY = posy + Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy))
+                } else {
+                    div.removeAttribute("style")
+                    div.style.right = (parseInt(selfDiv.style.width) - posx) + "px";
+                    div.style.bottom = (parseInt(selfDiv.style.height) - posy) + "px";
+                    topLeftPointX = posx - Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance))
+                    topLeftPointY = posy - Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy))
+                    bottomRightPointX = posx
+                    bottomRightPointY = posy
+                }
             }
             div.style.width = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + "px";
             div.style.height = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + "px";
@@ -128,9 +150,7 @@ window.onload = function () {
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
                     node.appendChild(textnode);
                     div.appendChild(node);
-                    createSelectBox(count)            
-                    console.log(topLeftPointX, topLeftPointY)
-                    console.log(bottomRightPointX, bottomRightPointY)
+                    createSelectBox(count)  
                     count++
                 } else {
                     selfDiv.removeChild(div);
