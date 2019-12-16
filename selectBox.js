@@ -53,6 +53,12 @@ window.onload = function () {
     var bottomRightPointX = 0
     var bottomRightPointY = 0
     selfDiv.onmousedown = function (e) {
+        topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
+        leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
+        if (selfDiv.parentNode) {
+            topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
+            leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
+        }
         var posx = e.offsetX;
         var posy = e.offsetY;
         var div = document.createElement("div");
