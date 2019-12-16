@@ -131,6 +131,7 @@ window.onload = function () {
                 }
                 selfDiv.onmousemove = null;
                 selfDiv.onmouseup = null;
+                selfDiv.onmouseleave = null;
             }
         }
     }
