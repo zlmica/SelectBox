@@ -47,6 +47,11 @@ window.onload = function () {
         topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
         leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
     })
+    // 坐标
+    var topLeftPointX = 0
+    var topLeftPointY = 0
+    var bottomRightPointX = 0
+    var bottomRightPointY = 0
     selfDiv.onmousedown = function (e) {
         var posx = e.offsetX;
         var posy = e.offsetY;
@@ -91,19 +96,35 @@ window.onload = function () {
             if (ev.clientX > (posx + selfDiv.offsetLeft - leftScrollDistance)) {
                 div.style.left = posx + "px";
                 div.style.top = posy + "px";
+                // 坐标
+                topLeftPointX = posx
+                topLeftPointY = posy
+                bottomRightPointX = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + posx
+                bottomRightPointY = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + posy
             } else {
                 div.removeAttribute("style")
                 div.style.right = (parseInt(selfDiv.style.width) - posx) + "px";
                 div.style.bottom = (parseInt(selfDiv.style.height) - posy) + "px";
+                topLeftPointX = posx - Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance))
+                topLeftPointY = posy - Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy))
+                bottomRightPointX = posx
+                bottomRightPointY = posy
             }
             div.style.width = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + "px";
             div.style.height = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + "px";
             node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 9) + "px"
+            selfDiv.onmouseleave = function (el) {
+                el.stopPropagation()
+                selfDiv.onmouseup = null;
+                selfDiv.removeChild(div);
+            }
             selfDiv.onmouseup = function () {
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
                     node.appendChild(textnode);
                     div.appendChild(node);
-                    createSelectBox(count)
+                    createSelectBox(count)            
+                    console.log(topLeftPointX, topLeftPointY)
+                    console.log(bottomRightPointX, bottomRightPointY)
                     count++
                 } else {
                     selfDiv.removeChild(div);
