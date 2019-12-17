@@ -9,8 +9,9 @@ function selectDivDeleteHandle(index) {
     console.log('删除了第' + index + '个选择框')
 }
 // 创建选择框方法
-function createSelectBox(index) {
+function createSelectBox(index, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY) {
     console.log('添加第' + index + '个选择框成功')
+    console.log('选择框的定位:' + topLeftPointX + ',' + topLeftPointY + ',' + bottomRightPointX + ',' + bottomRightPointY)
 }
 
 var count = 1
@@ -150,7 +151,7 @@ window.onload = function () {
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
                     node.appendChild(textnode);
                     div.appendChild(node);
-                    createSelectBox(count)  
+                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)  
                     count++
                 } else {
                     selfDiv.removeChild(div);
