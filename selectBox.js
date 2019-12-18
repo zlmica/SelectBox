@@ -4,6 +4,8 @@
 var userDrawMinW = 36;
 // 用户可画最小高度
 var userDrawMinH = 30;
+// 用户可画最多个数
+var userDrawMaxCout = 999;
 // 删除事件方法
 function selectDivDeleteHandle(index) {
     console.log('删除了第' + index + '个选择框')
@@ -142,6 +144,19 @@ window.onload = function () {
             div.style.width = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + "px";
             div.style.height = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + "px";
             node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 9) + "px"
+            if (count > 99) {
+                node.style.height = '22px'
+                node.style.width = '22px'
+                node.style.lineHeight = '22px'
+                node.style.top = '-25px'
+                node.style.borderRadius = '11px'
+                node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 11) + "px"
+            }
+            if (count == userDrawMaxCout) {
+                console.log('选择框个数已到最大上限')
+                selfDiv.onmouseup = null;
+                selfDiv.removeChild(div);
+            }
             selfDiv.onmouseleave = function (el) {
                 el.stopPropagation()
                 selfDiv.onmouseup = null;
