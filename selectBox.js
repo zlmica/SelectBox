@@ -144,6 +144,11 @@ window.onload = function () {
             div.style.width = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + "px";
             div.style.height = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + "px";
             node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 9) + "px"
+            if (count == userDrawMaxCout) {
+                console.log('选择框个数已到最大上限')
+                selfDiv.onmouseup = null;
+                selfDiv.removeChild(div);
+            }
             if (count > 99) {
                 node.style.height = '22px'
                 node.style.width = '22px'
@@ -152,15 +157,22 @@ window.onload = function () {
                 node.style.borderRadius = '11px'
                 node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 11) + "px"
             }
-            if (count == userDrawMaxCout) {
-                console.log('选择框个数已到最大上限')
-                selfDiv.onmouseup = null;
-                selfDiv.removeChild(div);
+            if (topLeftPointY < 22) {
+                node.style.top =  '-' + topLeftPointY + 'px'
             }
+            console.log(topLeftPointY)
             selfDiv.onmouseleave = function (el) {
                 el.stopPropagation()
+                if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
+                    node.appendChild(textnode);
+                    div.appendChild(node);
+                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)  
+                    count++
+                } else {
+                    selfDiv.removeChild(div);
+                }
                 selfDiv.onmouseup = null;
-                selfDiv.removeChild(div);
+                selfDiv.onmousemove = null;
             }
             selfDiv.onmouseup = function () {
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
