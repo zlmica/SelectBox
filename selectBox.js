@@ -160,7 +160,6 @@ window.onload = function () {
             if (topLeftPointY < 22) {
                 node.style.top =  '-' + topLeftPointY + 'px'
             }
-            console.log(topLeftPointY)
             selfDiv.onmouseleave = function (el) {
                 el.stopPropagation()
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
@@ -173,6 +172,7 @@ window.onload = function () {
                 }
                 selfDiv.onmouseup = null;
                 selfDiv.onmousemove = null;
+                selfDiv.onmouseleave = null;
             }
             selfDiv.onmouseup = function () {
                 if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
