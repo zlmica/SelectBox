@@ -1,49 +1,76 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+let count = 1
+let delCount: any = null
+interface Props {
+    // 用户可画最小宽度
+    userDrawMinW?: number;
+    // 用户可画最小高度
+    userDrawMinH?: number;
+    // 用户可画最多个数
+    userDrawMaxCount?: number;
+    // 边框颜色
+    color?: string;
+    // 动画开关
+    animation?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+    userDrawMinW: 36,
+    userDrawMinH: 30,
+    userDrawMaxCount: 999,
+    color: 'red',
+    animation: true
+})
 
-// 自定义可配置变量
-// 用户可画最小宽度
-var userDrawMinW = 36;
-// 用户可画最小高度
-var userDrawMinH = 30;
-// 用户可画最多个数
-var userDrawMaxCout = 999;
-// 删除事件方法
-function selectDivDeleteHandle(index) {
-    console.log('删除了第' + index + '个选择框')
+const emits = defineEmits(['delete', 'create'])
+
+const selectDivDeleteHandle = (index: number) => {
+    // console.log('删除了第' + index + '个选择框')
+    emits('delete', index)
 }
 // 创建选择框方法
-function createSelectBox(index, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY) {
-    console.log('添加第' + index + '个选择框成功')
-    console.log('选择框的定位:' + topLeftPointX + ',' + topLeftPointY + ',' + bottomRightPointX + ',' + bottomRightPointY)
+const createSelectBox = (index: number, topLeftPointX: number, topLeftPointY: number, bottomRightPointX: number, bottomRightPointY: number) => {
+    // console.log('添加第' + index + '个选择框成功')
+    // console.log('选择框的定位:' + topLeftPointX + ',' + topLeftPointY + ',' + bottomRightPointX + ',' + bottomRightPointY)
+    emits('create', {
+        counter: index,
+        pointer: {
+            topLeftPointX,
+            topLeftPointY,
+            bottomRightPointX,
+            bottomRightPointY
+        }
+    })
 }
 
-var count = 1
-var delCount = null
 // 供外部调用主动删除接口，传下标
-function deleteSelectDivByOtherBtn(boxIndex) {
-    var doms = document.querySelectorAll('.tagDiv')
-    for (var i = 0; i < doms.length; i++) {
-        var dom = doms[i]
-        if (dom.innerHTML == count) {
-            document.querySelector('#selectDiv').removeChild(dom.parentNode)
+const deleteSelectDivByOtherBtn = (boxIndex: number) => {
+    debugger
+    const doms = document.querySelectorAll('.tagDiv')
+    for (let i = 0; i < doms.length; i++) {
+        const dom = doms[i]
+        if (dom.innerHTML === String(boxIndex)) {
+            document.querySelector('#selectDiv')!.removeChild(dom.parentNode!)
         }
     }
-    for (var j = 0; j < doms.length; j++) {
-        var element = doms[j];
-        if (parseInt(element.innerHTML) > parseInt(boxIndex)) {
-            element.innerHTML = parseInt(element.innerHTML) - 1
+    for (let j = 0; j < doms.length; j++) {
+        const element = doms[j];
+        if (parseInt(element.innerHTML) > boxIndex) {
+            element.innerHTML = String(parseInt(element.innerHTML) - 1)
         }
     }
     selectDivDeleteHandle(boxIndex)
     count--
 }
-window.onload = function () {
-    var selfDiv = document.querySelector('#selectDiv')
-    var topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
-    var leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
+
+onMounted(() => {
+    let selfDiv = document.querySelector('#selectDiv') as HTMLElement
+    let topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
+    let leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
     if (selfDiv.parentNode != null) {
         selfDiv.parentNode.addEventListener('scroll', function () {
-            topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
-            leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
+            topScrollDistance = selfDiv.parentNode!.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
+            leftScrollDistance = selfDiv.parentNode!.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
         })
     }
     document.addEventListener('scroll', function () {
@@ -51,10 +78,10 @@ window.onload = function () {
         leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
     })
     // 坐标
-    var topLeftPointX = 0
-    var topLeftPointY = 0
-    var bottomRightPointX = 0
-    var bottomRightPointY = 0
+    let topLeftPointX = 0
+    let topLeftPointY = 0
+    let bottomRightPointX = 0
+    let bottomRightPointY = 0
     selfDiv.onmousedown = function (e) {
         topScrollDistance = document.body.scrollTop + document.documentElement.scrollTop
         leftScrollDistance = document.body.scrollLeft + document.documentElement.scrollLeft
@@ -62,33 +89,34 @@ window.onload = function () {
             topScrollDistance = selfDiv.parentNode.scrollTop + document.body.scrollTop + document.documentElement.scrollTop
             leftScrollDistance = selfDiv.parentNode.scrollLeft + document.body.scrollLeft + document.documentElement.scrollLeft
         }
-        var posx = e.offsetX;
-        var posy = e.offsetY;
-        var div = document.createElement("div");
-        var node = document.createElement("div");
+        let posx = e.offsetX;
+        let posy = e.offsetY;
+        let div = document.createElement("div");
+        let node = document.createElement("div");
         node.className = 'tagDiv'
-        var textnode = document.createTextNode(count + '');
+        let textnode = document.createTextNode(count + '');
         node.onmouseover = function (eno) {
             eno.stopPropagation()
-            delCount = parseInt(eno.target.innerHTML)
-            eno.target.innerHTML = 'X'
-            eno.target.classList.add('rotate')
-            eno.target.classList.remove('rotateF')
+            delCount = parseInt(eno.target!.innerHTML)
+            eno.target!.innerHTML = 'X'
+            if (props.animation) { }
+            eno.target!.classList.add('rotate')
+            eno.target!.classList.remove('rotateF')
             node.onmouseout = function (enod) {
                 enod.stopPropagation()
-                enod.target.innerHTML = delCount
-                enod.target.classList.add('rotateF')
-                enod.target.classList.remove('rotate')
+                enod.target!.innerHTML = delCount
+                enod.target!.classList.add('rotateF')
+                enod.target!.classList.remove('rotate')
             }
         }
         node.onmousedown = function (en) {
             en.stopPropagation()
             selfDiv.removeChild(div);
-            var allTag = document.querySelectorAll('.tagDiv')
-            for (var i = 0; i < allTag.length; i++) {
-                var element = allTag[i];
+            let allTag = document.querySelectorAll('.tagDiv')
+            for (let i = 0; i < allTag.length; i++) {
+                let element = allTag[i];
                 if (parseInt(element.innerHTML) > delCount) {
-                    element.innerHTML = parseInt(element.innerHTML) - 1
+                    element.innerHTML = String(parseInt(element.innerHTML) - 1)
                 }
             }
             count--
@@ -144,7 +172,7 @@ window.onload = function () {
             div.style.width = Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) + "px";
             div.style.height = Math.abs(topScrollDistance - Math.abs(ev.clientY - selfDiv.offsetTop - posy)) + "px";
             node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 9) + "px"
-            if (count == userDrawMaxCout) {
+            if (count == props.userDrawMaxCount) {
                 console.log('选择框个数已到最大上限')
                 selfDiv.onmouseup = null;
                 selfDiv.removeChild(div);
@@ -158,14 +186,14 @@ window.onload = function () {
                 node.style.left = (Math.abs(ev.clientX - selfDiv.offsetLeft - (posx - leftScrollDistance)) / 2 - 11) + "px"
             }
             if (topLeftPointY < 22) {
-                node.style.top =  '-' + topLeftPointY + 'px'
+                node.style.top = '-' + topLeftPointY + 'px'
             }
             selfDiv.onmouseleave = function (el) {
                 el.stopPropagation()
-                if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
+                if (parseInt(div.style.width) > props.userDrawMinW && parseInt(div.style.height) > props.userDrawMinH) {
                     node.appendChild(textnode);
                     div.appendChild(node);
-                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)  
+                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)
                     count++
                 } else {
                     selfDiv.removeChild(div);
@@ -175,10 +203,10 @@ window.onload = function () {
                 selfDiv.onmouseleave = null;
             }
             selfDiv.onmouseup = function () {
-                if (parseInt(div.style.width) > userDrawMinW && parseInt(div.style.height) > userDrawMinH) {
+                if (parseInt(div.style.width) > props.userDrawMinW && parseInt(div.style.height) > props.userDrawMinH) {
                     node.appendChild(textnode);
                     div.appendChild(node);
-                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)  
+                    createSelectBox(count, topLeftPointX, topLeftPointY, bottomRightPointX, bottomRightPointY)
                     count++
                 } else {
                     selfDiv.removeChild(div);
@@ -189,5 +217,50 @@ window.onload = function () {
             }
         }
     }
+})
 
+defineExpose({
+    deleteSelectDivByOtherBtn
+})
+</script>
+
+<template>
+    <div id="selectDiv">
+    </div>
+</template>
+
+<style>
+/* 选择框样式 */
+
+.selectDiv {
+    border: 2px solid v-bind('$props.color');
+    position: absolute;
+    width: 0;
+    height: 0;
 }
+
+/* 计数器样式 */
+.tagDiv {
+    position: absolute;
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    line-height: 18px;
+    width: 18px;
+    height: 18px;
+    background-color: v-bind('$props.color');
+    border-radius: 9px;
+    cursor: pointer;
+    top: -22px;
+}
+
+.rotate {
+    transform: v-bind('$props.animation ? "rotate(360deg)" : "rotate(0deg)"');
+    transition: all 1s;
+}
+
+.rotateF {
+    transform: v-bind('$props.animation ? "rotate(-360deg)" : "rotate(0deg)"');
+    transition: all 1s;
+}
+</style>
